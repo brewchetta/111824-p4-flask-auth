@@ -14,7 +14,7 @@ function UserPanel({currentUser, setCurrentUser}) {
 
           <Signup setCurrentUser={setCurrentUser} />
 
-          <Login />
+          <Login setCurrentUser={setCurrentUser} />
 
         </div>
     
