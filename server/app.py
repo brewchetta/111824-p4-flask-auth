@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
 
+### we'll use these later... ###
+# bcrypt.check_password_hash(hashed_password, password)
+#################################
+
+import os
+from flask_bcrypt import Bcrypt
 from flask import Flask, jsonify, request, session
 from flask_migrate import Migrate
 
 from models import db, User, Note
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
+app.secret_key = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
+
+bcrypt = Bcrypt(app)
 
 migrate = Migrate(app, db)
 
@@ -20,11 +32,11 @@ URL_PREFIX = '/api'
 
 # USER SIGNUP #
 
-@app.post('/users')
+@app.post(URL_PREFIX + '/users')
 def create_user():
     try:
-        data = request.json
-        new_user = User(username=data['username'])
+        new_user = User(username=request.json['username'])
+        new_user._hashed_password = bcrypt.generate_password_hash(request.json['password']).decode('utf-8')
         db.session.add(new_user)
         db.session.commit()
         return new_user.to_dict(), 201

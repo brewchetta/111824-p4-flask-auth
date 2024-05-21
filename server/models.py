@@ -1,10 +1,3 @@
-### we'll use these later... ###
-# from flask_bcrypt import Bcrypt
-# bcrypt = Bcrypt(app)
-# bcrypt.generate_password_hash(password).decode('utf-8')
-# bcrypt.check_password_hash(hashed_password, password)
-#################################
-
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.orm import validates
@@ -24,10 +17,23 @@ class User(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
+    _hashed_password = db.Column(db.String)
 
     notes = db.relationship('Note', back_populates='user')
 
     serialize_rules = ("-notes",)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # --- NOTES --- #

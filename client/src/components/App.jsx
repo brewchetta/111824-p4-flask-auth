@@ -9,10 +9,6 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null)
 
 
-  // SIGNUP, LOGIN AND LOGOUT FNS //
-  // more will go here soon...
-
-
   // RENDER //
 
   return (
@@ -20,7 +16,7 @@ function App() {
 
       <h1>Authentication + Authorization</h1>
 
-      <UserPanel currentUser={currentUser} />
+      <UserPanel currentUser={currentUser} setCurrentUser={setCurrentUser} />
 
       <Notes />
 

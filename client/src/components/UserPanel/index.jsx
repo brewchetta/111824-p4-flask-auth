@@ -2,7 +2,7 @@ import Signup from './Signup'
 import Login from './Login'
 import UserDetails from "./UserDetails"
 
-function UserPanel({currentUser}) {
+function UserPanel({currentUser, setCurrentUser}) {
 
   // RENDER //
 
@@ -12,7 +12,7 @@ function UserPanel({currentUser}) {
         
         <div className="flex-row">
 
-          <Signup />
+          <Signup setCurrentUser={setCurrentUser} />
 
           <Login />
 
@@ -23,7 +23,7 @@ function UserPanel({currentUser}) {
     } else { // render UserDetails if currentUser
       
       return (
-        <UserDetails currentUser={currentUser} />
+        <UserDetails currentUser={currentUser} setCurrentUser={setCurrentUser} />
       )
 
     }
