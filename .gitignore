@@ -55,3 +55,5 @@ jspm_packages
 app/migrations/versions/*.py
 
 .env
+
+__pycache__/
