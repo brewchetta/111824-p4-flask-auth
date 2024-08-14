@@ -5,12 +5,15 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
-# from flask_bcrypt import Bcrypt
+from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # APP CONFIGURATION
 
 app = Flask(__name__)
-app.secret_key = 'super_duper_secret'
+app.secret_key = os.environ.get('FLASK_SECRET')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
@@ -29,4 +32,4 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
-# bcrypt = Bcrypt(app)
+bcrypt = Bcrypt(app)

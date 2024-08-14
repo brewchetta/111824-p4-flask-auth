@@ -12,7 +12,20 @@ function Signup({setCurrentUser}) {
   function handleSubmit(e) {
     e.preventDefault()
 
-    console.log("Please write code here to attempt sign up...")
+    fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({username, password})
+    })
+    .then( res => {
+      if (res.ok) {
+        res.json()
+        .then( data => setCurrentUser(data) )
+      } else {
+        res.json()
+        .then( data => alert( data.error ) )
+      }
+    })
   }
 
   // RENDER //
