@@ -1,3 +1,10 @@
+### we'll use these later... ###
+# from flask_bcrypt import Bcrypt
+# bcrypt.generate_password_hash(password).decode('utf-8')
+# bcrypt.check_password_hash(hashed_password, password)
+#################################
+
+
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 from config import db
@@ -15,17 +22,6 @@ class User(db.Model, SerializerMixin):
     notes = db.relationship('Note', back_populates='user')
 
     serialize_rules = ("-notes",)
-
-
-
-
-
-
-
-
-
-
-
 
 
 

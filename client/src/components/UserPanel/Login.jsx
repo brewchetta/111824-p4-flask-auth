@@ -10,21 +10,7 @@ function Login({ setCurrentUser }) {
   function handleSubmit(e) {
     e.preventDefault()
 
-    fetch('/api/login', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Accept': 'application/json' 
-      },
-      body: JSON.stringify({username, password})
-    }).then(res => {
-      if (res.ok) {
-        res.json()
-        .then(user => setCurrentUser(user))
-      } else {
-        alert('Invalid username or password')
-      }
-    })
+    console.log("Please write code here to attempt login...")
   }
 
   // RENDER //
