@@ -32,4 +32,5 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
+# BCRYPT --- encryption tool for our passwords
 bcrypt = Bcrypt(app)

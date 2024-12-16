@@ -6,7 +6,7 @@ function UserPanel({currentUser, setCurrentUser}) {
 
   // RENDER //
 
-  if (!currentUser) { // render Signup and Login if no currentUser
+  if (!currentUser) { // Signup & Login if no currentUser
 
     return (
         
@@ -20,7 +20,7 @@ function UserPanel({currentUser, setCurrentUser}) {
     
     )
 
-    } else { // render UserDetails if currentUser
+    } else { // UserDetails if currentUser
       
       return (
         <UserDetails currentUser={currentUser} setCurrentUser={setCurrentUser} />

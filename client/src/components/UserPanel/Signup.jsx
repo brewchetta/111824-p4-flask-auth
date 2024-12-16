@@ -12,20 +12,7 @@ function Signup({setCurrentUser}) {
   function handleSubmit(e) {
     e.preventDefault()
 
-    fetch('/api/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({username, password})
-    })
-    .then( res => {
-      if (res.ok) {
-        res.json()
-        .then( data => setCurrentUser(data) )
-      } else {
-        res.json()
-        .then( data => alert( data.error ) )
-      }
-    })
+    alert("TODO: Build the signup functionality!")
   }
 
   // RENDER //

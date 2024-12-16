@@ -28,11 +28,7 @@ class User(db.Model, SerializerMixin):
     
     @password.setter
     def password(self, value): # ...but they can set their encrypted password
-        self.password_hash = bcrypt.generate_password_hash(value).decode('utf-8')
-
-    def authenticate(self, password_to_check): # ...and we can see if a password matches theirs
-        return bcrypt.check_password_hash(self.password_hash, password_to_check) # True / False
-
+        self.password_hash = value
 
 
 # --- NOTES --- #
