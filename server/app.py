@@ -7,7 +7,6 @@ from config import app
 
 # USER SIGNUP #
 
-# @app.post(URL_PREFIX + '/users') OR
 @app.post('/api/users')
 def create_user():
     data = request.json
@@ -16,6 +15,7 @@ def create_user():
         new_user.password = data['password']
         db.session.add(new_user)
         db.session.commit()
+        session['user_id'] = new_user.id
         return new_user.to_dict(), 201
     except Exception as e:
         return { 'error': str(e) }, 400
@@ -25,7 +25,12 @@ def create_user():
 
 @app.get('/api/check_session')
 def check_session():
-    pass
+    user_id = session.get('user_id')
+    user = User.query.where(User.id == user_id).first()
+    if user:
+        return user.to_dict(), 200
+    else:
+        return {}, 204
 
 # SESSION LOGIN/LOGOUT#
 
@@ -36,7 +41,8 @@ def login():
 
 @app.delete('/api/logout')
 def logout():
-    pass
+    session.pop('user_id')
+    return {}, 204
 
 
 

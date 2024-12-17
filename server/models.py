@@ -27,8 +27,11 @@ class User(db.Model, SerializerMixin):
         raise Exception("You may not see the password MWAHAHAHAHAHA")
     
     @password.setter
-    def password(self, value): # ...but they can set their encrypted password
-        self.password_hash = value
+    def password(self, new_value): # ...but they can set their encrypted password
+        self.password_hash = bcrypt.generate_password_hash(new_value).decode('utf-8')
+
+    def authenticate(self, password_to_validate):
+        return bcrypt.check_password_hash(self.password_hash, password_to_validate)
 
 
 # --- NOTES --- #

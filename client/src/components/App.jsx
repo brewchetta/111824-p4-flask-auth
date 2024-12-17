@@ -6,8 +6,20 @@ function App() {
 
   // STATE //
 
-  const [currentUser, setCurrentUser] = useState(null) 
+  const [currentUser, setCurrentUser] = useState(null)
   // we'll partially track the signed in user using state
+
+  async function checkSession() {
+    const response = await fetch('/api/check_session')
+    if (response.status === 200) {
+      const data = await response.json()
+      setCurrentUser(data)
+    }
+  }
+
+  useEffect(() => {
+    checkSession()
+  }, [])
 
 
   // RENDER //

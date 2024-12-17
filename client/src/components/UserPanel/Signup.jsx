@@ -9,10 +9,22 @@ function Signup({setCurrentUser}) {
 
   // EVENTS //
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    alert("TODO: Build the signup functionality!")
+    const response =  await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+
+    if (response.ok) {
+      const data = await response.json()
+      setCurrentUser(data)
+    } else {
+      alert("Invalid username or password")
+    }
+
   }
 
   // RENDER //
