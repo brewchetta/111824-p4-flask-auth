@@ -31,7 +31,7 @@ function App() {
 
       <UserPanel currentUser={currentUser} setCurrentUser={setCurrentUser} />
 
-      <Notes />
+      <Notes currentUser={currentUser} />
 
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import NotesForm from './NotesForm'
 
-function Notes() {
+function Notes({ currentUser }) {
 
   // STATE //
 
@@ -11,7 +11,9 @@ function Notes() {
     fetch('/api/notes')
     .then(res => res.json())
     .then(data => setNotes(data))
-  }, [])
+  }, [ currentUser ])
+
+  console.log(currentUser, notes)
 
   // EVENTS //
 
