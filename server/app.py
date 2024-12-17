@@ -36,7 +36,13 @@ def check_session():
 
 @app.post('/api/login')
 def login():
-    pass
+    data = request.json
+    user = User.query.where(User.username == data.get('username')).first()
+    if user and user.authenticate( data.get('password') ):
+        session['user_id'] = user.id
+        return user.to_dict(), 202
+    else:
+        return { 'error': 'Invalid username or password' }, 401
     
 
 @app.delete('/api/logout')
@@ -51,14 +57,16 @@ def logout():
 
 @app.get('/api/notes')
 def get_notes():
-    all_notes = Note.query.all()
+    user_id = session.get('user_id')
+    all_notes = Note.query.where(Note.user_id == user_id).all()
     return [note.to_dict() for note in all_notes], 200
 
 @app.post('/api/notes')
 def create_note():
     try:
         data = request.json
-        new_note = Note(**data)
+        new_note = Note(content=data.get('content'))
+        new_note.user_id = session.get('user_id')
         db.session.add(new_note)
         db.session.commit()
         return new_note.to_dict(), 201

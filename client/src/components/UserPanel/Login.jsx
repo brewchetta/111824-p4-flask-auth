@@ -7,10 +7,21 @@ function Login({ setCurrentUser }) {
 
   // SUBMIT EVENT
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    alert("TODO: Build out the login functionality!")
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+
+    if (response.ok) {
+      const user = await response.json()
+      setCurrentUser( user )
+    } else {
+      alert("Invalid username or password")
+    }
   }
 
   // RENDER //

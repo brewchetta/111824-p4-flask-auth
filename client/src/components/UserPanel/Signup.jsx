@@ -12,15 +12,15 @@ function Signup({setCurrentUser}) {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    const response =  await fetch('/api/users', {
+    const response = await fetch('/api/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ username, password })
     })
 
     if (response.ok) {
-      const data = await response.json()
-      setCurrentUser(data)
+      const user = await response.json()
+      setCurrentUser( user )
     } else {
       alert("Invalid username or password")
     }
