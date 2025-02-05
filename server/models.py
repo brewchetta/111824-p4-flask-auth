@@ -16,23 +16,10 @@ class User(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
-    password_hash = db.Column(db.String)
 
     notes = db.relationship('Note', back_populates='user')
 
-    serialize_rules = ("-notes", "-password_hash")
-
-    @property
-    def password(self): # we will not let users see their password
-        raise Exception("You may not see the password MWAHAHAHAHAHA")
-    
-    @password.setter
-    def password(self, new_value): # ...but they can set their encrypted password
-        self.password_hash = bcrypt.generate_password_hash(new_value).decode('utf-8')
-
-    def authenticate(self, password_to_validate):
-        return bcrypt.check_password_hash(self.password_hash, password_to_validate)
-
+    serialize_rules = ("-notes.user",)
 
 # --- NOTES --- #
 
