@@ -1,10 +1,9 @@
 function UserDetails({currentUser, setCurrentUser}) {
 
   function handleLogout() {
-    setCurrentUser(null) // set current user to null to clear them out of state
-    fetch('/api/logout', {
-      method: 'DELETE'
-    })
+    // set current user to null to clear them out of state
+    setCurrentUser(null) 
+    fetch('/api/logout', { method: 'DELETE' })
   }
 
     return (

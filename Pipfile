@@ -11,9 +11,9 @@ flask-migrate = "*"
 sqlalchemy-serializer = "1.4.1"
 importlib-metadata = "6.0.0"
 importlib-resources = "5.10.0"
+flask-cors = "*"
 flask-bcrypt = "*"
 python-dotenv = "*"
-flask-cors = "*"
 
 [dev-packages]
 

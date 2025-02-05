@@ -16,10 +16,24 @@ class User(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String)
 
     notes = db.relationship('Note', back_populates='user')
 
-    serialize_rules = ("-notes.user",)
+    serialize_rules = ("-notes.user", "-password_hash")
+
+    @property
+    def password(self):
+        raise Exception('You may not see a user password')
+    
+    @password.setter
+    def password(self, new_password):
+        pw_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        self.password_hash = pw_hash
+
+    # rehashes and compares the new password and old password
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
 
 # --- NOTES --- #
 
