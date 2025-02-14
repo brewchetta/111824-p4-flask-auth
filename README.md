@@ -1,104 +1,125 @@
-# Flask Authentication & Authorization
+# Flask / React Deployment
 
-## Learning Goals
+## Intro
 
-- Use the session object to authenticate a user
+The purpose of this lecture repo is to show how deployment works with the render service. In order to make this work, you must first sign up for a free render account at https://render.com/ where your site will be hosted.
 
-- Securely store the password in a hash
+## Install Postgresql
 
-- Use the session object to determine when a user is logged in
+The first step here will be to install postgresql onto your computer and make sure that it's running. This process depends on your OS but can easily be searched on the internet.
 
-- Authorize only certain resources depending on whether a user is logged in
+## Create a Database on Render
 
-## Getting Started
+In your Render dashboard choose to create a new postgresql database from the dashboard. The name and region are important (you'll most likely choose Ohio), everything else should be left as is and considered optional. Be sure to select `hobby project` for the pricing model.
 
-Fork / clone the repo and run
+Very importantly, this database will disappear around the 60 day mark so be ready to reset it often while job hunting.
+
+The `External Database URL` on the following page will be important so make sure to copy it down somewhere.
+
+## Additional Flask Config #####
+
+We'll need to install a pair of packages for flask to run properly on render, specifically gunicorn which is what they utilize to run their flask servers:
+
 ```bash
-pipenv install
+pipenv install gunicorn psycopg2-binary
 ```
 
-To start the server:
+From here we add our application requirements to a file that render will read when downloading its own packages:
+
 ```bash
-pipenv shell
-cd server
-flask db upgrade
-python app.py
+pipenv requirements > requirements.txt
 ```
 
-To start the client, create a separate terminal and run:
+## Environment
+
+Create a `.env` file at the root of the project. From there follow these steps to load your `.env` variables into flask...
+
+In your terminal:
+
 ```bash
-npm install --prefix client
-npm run dev --prefix client
+pipenv install python-dotenv
 ```
 
-## Cheat Sheet
-
-### Set Up the Config
-
-You'll need the `flask-bcrypt` and `python-dotenv` packages. If they haven't been installed you can add them to `Pipfile` and `pipenv install`.
-
-Create the `.env` file and IMMEDIATELY add it to your `.gitignore`. You'll generate and add your secret key to it so it looks something like this:
-
-```
-SECRET_KEY=1234567890abcdef
-```
-
-Inside the `config.py` add these imports:
+Somewhere near the start of `app.py` add:
 
 ```python
-import os
-from flask_bcrypt import bcrypt
 from dotenv import load_dotenv
+load_dotenv()
 ```
 
-Right after the imports initiatialize your environmental variables with `load_dotenv()`. After declaring your `app = App(__name__)` add the line `app.secret_key = os.environ.get('SECRET_KEY')`. Towards the bottom initialize bcrypt with `bcrypt = Bcrypt(app)`.
+Be sure to add the `.env` file to your `.gitignore` so your variables don't get pushed up to github.
 
-### Add Passwords to User Model
+At this point you'll add in a line to your `.env` file for postgresql. Create a line for the `POSTGRES_URL` and paste in the external url from the previous steps with Render.
 
-Import the `bcrypt` variable created in the previous step.
+```env
+POSTGRES_URL=your_url_goes_here
+```
 
-In the `User` model in `models.py` create a new column for the `password_hash`.
+Inside your flask project you'll need to change the `SQLALCHEMY_DATABASE_URI` to use your `POSTGRES_URL` rather than use the sqlite version. In `app.py` or `config.py` change `app.config['SQLALCHEMY_DATABASE_URI']` so it reads like this:
 
-You'll want to make a property so that the `password` cannot be read and when people try to write it they will instead assign a new hash to the `password_hash`.
+```python
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRESQL_URL')
+```
 
-Create an `authenticate` method which when given a password will check it against the `password_hash`.
+It's also strongly recommended if you have any other secret keys or API keys that they get added with similar lines.
 
-### Client Set Up
+## React Build
 
-Create a `currentUser` state. This state may be as high up as possible since most components will use it.
+Once your client directory is ready for prime time run `npm run build --prefix client` from the top directory or `npm run build` in the client directory. You should now be able to see `client/build` as a new directory. This should be added to your `.gitignore` by default but if not be sure to ignore it since it's just extra code.
 
-If you're using `vite`, in the `vite.config.js` add the lines so that `/api` fetches get proxied to `http://localhost:5555`.
+The purpose of this is mainly to see whether React will build properly, this step will also happen when we deploy the site.
 
-### Creating the Forms and Routes
+## Setting Default Flask Routes
 
-Create your forms on the frontend as usual for Signup and Login. For the fetch you must use `/api/users` style routes instead of `http://localhost:5555/api/users`. If you fail to do this the cookies won't work.
+We'll set up flask to default to react code if it doesn't hit a proper flask route. In app.py make amend these lines for the `app=Flask` and `@app.route('/')`:
 
-On the backend you will build your routes as normal however you'll also need to import `session` from `flask` and whenever a user logs in you'll add `session['user_id'] = user.id`.
+```python
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../client/build',
+    template_folder='../client/build'
+)
 
-### Create the Check Session
+@app.route('/')
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
+```
 
-Add a useEffect that makes a request to `/api/check_session` on load. The backend will either return the user or a NO CONTENT request depending on whether there is a user.
+This will enable flask to find and render the React code as a fallback route. You can try it now by starting your flask server and going to your normal `http://localhost:5555`.
 
-### Create the Login
+## Configuring a New Render Project
 
-Your login will probably look similar to your signup in React. In flask, you will check that the user exists and that you can authenticate them. If so, return the user and otherwise return some sort of authorization error.
+Ok that was a lot but we're at the exciting part! Once done, you'll want to add and commit potentially on a `deployment` branch.
 
-### Create the Logout
+Go to the render dashboard and choose `New+` in the top right choosing `Web Service`. Use github to find your committed and pushed project (you should be able to choose the branch as well).
 
-Create a logout button. When clicked, the backend route will `.pop` the `user_id`. Clear the user from state.
+When creating your new web application be sure to add these configurations:
 
-### Only Return User Specific Resources
+```
+Environment: Python 3
 
-For any resources that are user specific, find the user in Flask using the `session.get('user_id')` and use your relationships to get that user's specific data.
+Branch: main (or deployment)
 
-## Additional Resources
+Build Command: pip install -r requirements.txt && npm install --prefix client && npm run build --prefix client
 
-[MDN Using HTTP Cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies)
+Start Command: gunicorn --chdir server app:app
+```
 
-[Flask Session](https://flask-session.readthedocs.io/en/latest/)
+At first the app will fail to build and that's totally ok because we need to add in one more bit of configuration in the `environment` tab:
 
-[Vite + React Proxying API Requests](https://vitejs.dev/config/server-options#server-proxy)
+```
+PYTHON_VERSION=3.8.13
+POSTGRES_URL=whatever_postgresql_uri_you_got
+```
 
-[Create React App Proxying API Requests](https://create-react-app.dev/docs/proxying-api-requests-in-development/)
+You should also add any additional secret keys or API keys that are in your regular `.env` file.
 
-[Python Generating Secrets](https://docs.python.org/3/library/secrets.html)
+## Conclusion
+
+From here your app should build and run! Because this is the free tier, be ready for it to remain at the back of any queues and load slowly during busy times. Additionally, your app will "go to sleep" after a period of time and take upwards of a minute to wake up and reload in certain circumstances.
+
+Additionally, depending on the configurations you chose then any changes to your deployed branch should eventually make their way onto your rendered website.
+
+Nevertheless, congrats! You have a fullstack application on the internet!
