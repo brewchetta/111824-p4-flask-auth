@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 
-from flask import request, session
+from flask import request, session, render_template
 from models import db, User, Note
 from config import app
+
+@app.route('/')
+@app.route('/<int:id>')
+def index(id=0):
+    return render_template("index.html")
 
 # USER SIGNUP #
 
